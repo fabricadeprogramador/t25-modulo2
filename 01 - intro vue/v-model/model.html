@@ -1,22 +1,74 @@
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Document</title>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
 </head>
+
 <body>
     <div id="app">
-
-        <input type="text" v-model='message'>
-        <input type="text" v-model='message'>
+        <cadastro-email></cadastro-email>
+        <cadastro-email></cadastro-email>
     </div>
 </body>
 <script>
-    var app = new Vue({
-        el: '#app',
-        data: {
-            message: 'Mensagem'
+    Vue.component('cadastro-email', {
+        template: `
+        <div>
+            <h1>Cadastre-se</h1>       
+            <input type="text" v-model='emailInput' placeholder="E-mail">
+
+            <button @click="salvar">Salvar</button>
+            <button @click="cancelar">Cancelar</button>
+
+            <div>
+                <ul>
+                    <li v-for="email, index in emails"> {{ email }}
+                        <button @click="editar(index)">Editar</button>
+                        <button @click="remover(index)">Remover</button>
+                    </li>
+                </ul>
+            </div>
+        </div> `,
+        data() {
+            return {
+                emailInput: '',
+                emails: [],
+                posEdicao: -1
+            }
+        },
+        methods: {
+            salvar() {
+
+                if (this.posEdicao == -1) {
+                    this.emails.push(this.emailInput)
+                } else {
+                    this.emails[this.posEdicao] = this.emailInput
+                    this.posEdicao = -1
+                }
+                this.cancelar()
+            },
+
+            cancelar() {
+                this.emailInput = ''
+                this.posEdicao = -1
+            },
+
+            remover(posicao) {
+                this.emails.splice(posicao, 1)
+            },
+
+            editar(posicao) {
+                this.emailInput = this.emails[posicao]
+                this.posEdicao = posicao
+            }
         }
     })
+
+    var app = new Vue({
+        el: '#app',
+    })
 </script>
+
 </html>
