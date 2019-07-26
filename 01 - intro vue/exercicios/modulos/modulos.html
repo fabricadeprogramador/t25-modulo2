@@ -1,0 +1,227 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Exercicio de Módulos</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1>{{ tituloBase }}</h1>
+
+      <p>COMPONENTE 1</p>
+      <loja titulo="Loja - HT"></loja>
+
+      <p>COMPONENTE 2</p>
+      <carros titulo="Color Selector"></carros>
+    </div>
+  </body>
+
+  <script>
+    //   COMPONENTE DA LOJA
+    Vue.component("loja", {
+      props: {
+        titulo: {
+          type: String,
+          required: true,
+          default: "Lojinha"
+        }
+      },
+      template: `
+            <div>
+                 <h1>{{ titulo }}</h1>
+
+                <div v-for="produto, index in produtos" :key="produto.id" style="display: flex">
+                <div class="div-um-quarto">
+                    <img :src="produto.imagem" class="imagem">
+                </div>
+                <div class="div-um-quarto">
+                    <div class="div-dados"> Nome: {{produto.nome}}</div>
+                    <div class="div-dados"> Qtd: {{produto.qtd}}</div>
+                    <div class="div-dados"> Descrição: {{produto.descricao}}</div>
+                </div>
+
+                <div class="div-um-quarto">
+                    <span>R$ {{(produto.preco).toFixed(2)}}</span>
+                </div>
+
+                <div class="div-um-quarto">
+                    <button @click="adicionarAoCarrinho(index)" class="botao">Adicionar ao Carrinho</button>
+                </div>
+
+                </div>
+
+                <div class="saida">
+                    <div>
+                        Quantidade de produtos no carrinho: {{ carrinho.produtos.length }}
+                    </div>
+                    <div>
+                        Valor total: R$ {{ (carrinho.total).toFixed(2) }}
+                    </div>
+                </div>
+
+                <button @click="finalizar()" class="botao">Finalizar</button>
+            </div>
+        `,
+      data() {
+        return {
+          carrinho: {
+            produtos: [],
+            total: 0
+          },
+          produtoCorrente: {},
+          produtos: [
+            {
+              id: 0,
+              nome: "Camiseta Branca",
+              preco: 25.9,
+              descricao: "Camiseta branca de algodão, Lacoste",
+              qtd: 12,
+              imagem: "img/camiseta-lacoste-branca.jpg"
+            },
+            {
+              id: 1,
+              nome: "Camiseta Branca",
+              preco: 25.9,
+              descricao: "Camiseta branca de algodão, Lacoste",
+              qtd: 12,
+              imagem: "img/camiseta-lacoste-branca.jpg"
+            },
+            {
+              id: 2,
+              nome: "Camiseta Branca",
+              preco: 25.9,
+              descricao: "Camiseta branca de algodão, Lacoste",
+              qtd: 12,
+              imagem: "img/camiseta-lacoste-branca.jpg"
+            },
+            {
+              id: 3,
+              nome: "Camiseta Branca",
+              preco: 25.9,
+              descricao: "Camiseta branca de algodão, Lacoste",
+              qtd: 12,
+              imagem: "img/camiseta-lacoste-branca.jpg"
+            }
+          ]
+        };
+      },
+      methods: {
+        adicionarAoCarrinho(index) {
+          if (this.produtos[index].qtd > 0) {
+            this.produtos[index].qtd--;
+            this.carrinho.produtos.push(this.produtos[index]);
+            this.carrinho.total += this.produtos[index].preco;
+          } else {
+            alert("Produto indisponível");
+          }
+        },
+
+        finalizar() {
+          this.carrinho = {
+            produtos: [],
+            total: 0
+          };
+        }
+      }
+    });
+
+    // COMPONENTE CARROS
+    Vue.component("carros", {
+      props: {
+        titulo: {
+          type: String,
+          required: true,
+          default: "Seletor de Cores"
+        }
+      },
+      template: `
+        <div>
+            <h1>{{ titulo }}</h1>
+
+            <img :src="carroSelecionado.imagem" class="imagem">
+
+            <span> {{ carroSelecionado.marca }} {{ carroSelecionado.modelo }}, {{ carroSelecionado.ano }} - {{ carroSelecionado.cor }}</span>
+
+            <div v-for="carro in carros" 
+                :key="carro.id" 
+                class="caixa-cor" 
+                @mouseover="selecionarCarro(carro)"
+                :style="{ backgroundColor : carro.cor}">
+            </div>
+
+            <span v-for="carro in carros" 
+                    :key="carro.id"> {{carro.cor}} : {{ carro.qtd }} </span>
+
+            <button @click="comprar">Comprar</button>    
+        </div>
+      `,
+      data() {
+        return {
+          carroSelecionado: {
+            id: 0,
+            marca: "Volkswagen",
+            modelo: "Up",
+            ano: 2019,
+            qtd: 10,
+            cor: "red",
+            imagem: "img/vermelho.jpg"
+          },
+          carros: [
+            {
+              id: 0,
+              marca: "Volkswagen",
+              modelo: "Up",
+              ano: 2019,
+              qtd: 10,
+              cor: "red",
+              imagem: "img/vermelho.jpg"
+            },
+            {
+              id: 1,
+              marca: "Volkswagen",
+              modelo: "Up",
+              ano: 2019,
+              qtd: 10,
+              cor: "white",
+              imagem: "img/branco.jpg"
+            },
+            {
+              id: 2,
+              marca: "Volkswagen",
+              modelo: "Up",
+              ano: 2019,
+              qtd: 10,
+              cor: "black",
+              imagem: "img/preto.jpg"
+            }
+          ]
+        };
+      },
+      methods: {
+        selecionarCarro(carro) {
+          this.carroSelecionado = carro;
+        },
+        comprar() {
+          if (this.carroSelecionado.qtd > 0) {
+            this.carroSelecionado.qtd--;
+            alert("Venda realizada com sucesso!");
+          } else {
+            alert(
+              "Todos os carros da cor " +
+                this.carroSelecionado.cor +
+                " já foram vendidos!"
+            );
+          }
+        }
+      }
+    });
+
+    // OBJETO VUE - CONTROLLER
+    var app = new Vue({
+      el: "#app",
+      data: {
+        tituloBase: "Exercício de Componentes"
+      }
+    });
+  </script>
+</html>
