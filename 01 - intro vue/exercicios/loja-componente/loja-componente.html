@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Componente Loja</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h2>Carrinho {{ carrinho.length }}</h2>
+      <button @click="alterarDetalhes">Detalhes</button>
+
+      <div v-if="mostrarDetalhes">
+        <ul>
+          <li v-for="produto, index in carrinho">
+            <img src="" alt="" />
+            {{ produto.nome }}
+            {{ produto.valor }}
+
+            <button @click="removerProduto(index)">-</button>
+          </li>
+
+          Total: R${{
+            valorTotal
+          }}
+        </ul>
+      </div>
+
+      <componente-produtos
+        setor="Eletronicos"
+        @evento-produto="adicionarAoCarrinho"
+      ></componente-produtos>
+    </div>
+    <script>
+      Vue.component("componente-produtos", {
+        props: {
+          setor: { type: String }
+        },
+        template: `
+            <div>
+                Setor: {{ setor }}
+
+                <ul>
+                    <li v-for="produto, index in produtos">
+                        <img></img>
+                        {{produto.nome}}
+                        <button @click="adicionarProduto(index)">+</button>
+                        </li>
+                </ul>
+            
+            </div>
+
+        `,
+        data() {
+          return {
+            produtos: [
+              { nome: "Produto", valor: 10, imagem: "" },
+              { nome: "Produto", valor: 10, imagem: "" },
+              { nome: "Produto", valor: 10, imagem: "" },
+              { nome: "Produto", valor: 10, imagem: "" }
+            ]
+          };
+        },
+        methods: {
+          adicionarProduto(index) {
+            this.$emit("evento-produto", this.produtos.splice(index, 1));
+          }
+        }
+      });
+
+      var app = new Vue({
+        el: "#app",
+        data: {
+          carrinho: [],
+          valorTotal: 0,
+          mostrarDetalhes: false
+        },
+        methods: {
+          alterarDetalhes() {
+            this.mostrarDetalhes = !this.mostrarDetalhes;
+          },
+          adicionarAoCarrinho(produto) {
+            this.carrinho.push(produto[0]);
+            this.calcularTotal();
+          },
+          removerProduto(index) {
+            this.carrinho.splice(index, 1);
+            this.calcularTotal();
+          },
+
+          calcularTotal() {
+            this.valorTotal = 0;
+            for (let i = 0; i < this.carrinho.length; i++) {
+              this.valorTotal += this.carrinho[i].valor;
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
