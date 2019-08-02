@@ -1,0 +1,91 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cadastro de Cliente</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  </head>
+
+  <body>
+    <div id="app">
+      <h1>Cadastro de cliente</h1>
+
+      <componente-mensagem
+        :mensagens="mensagens"
+        v-if="mostrarMensagens"
+      ></componente-mensagem>
+
+      <form @submit.prevent="cadastrar">
+        <input type="text" placeholder="Nome" v-model="nome" />
+        <input type="text" placeholder="Idade" v-model.number="idade" />
+        <input type="text" placeholder="Sexo" v-model="sexo" />
+
+        <input type="submit" value="Salvar" />
+      </form>
+
+      <ul>
+        <li v-for="(cliente, index) in clientes" :key="index">
+          {{ cliente.nome }} {{ cliente.idade }} {{ cliente.sexo }}
+        </li>
+      </ul>
+    </div>
+  </body>
+
+  <script>
+    Vue.component("componente-mensagem", {
+      props: {
+        mensagens: {
+          type: Array
+        }
+      },
+      template: `
+            <div>
+                <h1>Corrija os seguintes erros:</h1>
+                <ul>
+                    <li v-for="mensagem in mensagens"> {{ mensagem }}</li>
+                </ul>
+            </div>
+        `
+    });
+
+    var app = new Vue({
+      el: "#app",
+      data: {
+        clientes: [],
+        nome: "",
+        idade: 0,
+        sexo: "",
+        mostrarMensagens: false,
+        mensagens: []
+      },
+      methods: {
+        cadastrar() {
+          this.mostrarMensagens = false;
+          this.mensagens = [];
+
+          let cliente = {};
+
+          if (this.nome == "") {
+            this.mensagens.push("Preencha o campo nome!");
+            this.mostrarMensagens = true;
+          }
+          if (this.idade == 0) {
+            this.mensagens.push("Preencha o campo idade!");
+            this.mostrarMensagens = true;
+          }
+          if (this.sexo == "") {
+            this.mensagens.push("Preencha o campo sexo!");
+            this.mostrarMensagens = true;
+          }
+
+          if (!this.mostrarMensagens) {
+            cliente.nome = this.nome;
+            cliente.idade = this.idade;
+            cliente.sexo = this.sexo;
+
+            this.clientes.push(cliente);
+          }
+        }
+      }
+    });
+  </script>
+</html>
